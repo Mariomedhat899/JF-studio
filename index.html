@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JF — John Farag | Media Production Studio</title>
+<meta name="description" content="JF Media Production — John Farag Fared. Commercials, Filmmaking, Photography & Post-Production. Cairo, Egypt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0a0a0a;
+    --near-black:#0e0e0e;
+    --panel:#131313;
+    --white:#f4f3ef;
+    --dim:#8f8d86;
+    --line: rgba(244,243,239,0.14);
+    --line-soft: rgba(244,243,239,0.07);
+    --ease: cubic-bezier(.16,.84,.44,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'Inter',sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    cursor:none;
+  }
+  ::selection{background:var(--white);color:var(--black);}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  .serif{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;}
+
+  /* ---------- grain overlay ---------- */
+  .grain{
+    pointer-events:none;position:fixed;inset:0;z-index:9998;
+    opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grainShift .5s steps(4) infinite;
+  }
+  @keyframes grainShift{
+    0%{transform:translate(0,0)}
+    25%{transform:translate(-2%,1%)}
+    50%{transform:translate(1%,-2%)}
+    75%{transform:translate(-1%,2%)}
+    100%{transform:translate(0,0)}
+  }
+  .vignette{
+    pointer-events:none;position:fixed;inset:0;z-index:9997;
+    background:radial-gradient(120% 100% at 50% 40%, transparent 40%, rgba(0,0,0,.55) 100%);
+  }
+
+  /* ---------- custom cursor ---------- */
+  .cursor-dot,.cursor-ring{
+    position:fixed;top:0;left:0;pointer-events:none;z-index:10000;
+    border-radius:50%; transform:translate(-50%,-50%);
+    mix-blend-mode:difference;
+  }
+  .cursor-dot{width:6px;height:6px;background:var(--white);}
+  .cursor-ring{
+    width:38px;height:38px;border:1px solid var(--white);
+    transition:width .25s var(--ease), height .25s var(--ease), opacity .25s;
+  }
+  .cursor-ring.big{width:90px;height:90px;background:var(--white);mix-blend-mode:difference;opacity:.9;}
+  body.no-fine-pointer{cursor:auto;}
+  body.no-fine-pointer .cursor-dot, body.no-fine-pointer .cursor-ring{display:none;}
+
+  /* ---------- preloader ---------- */
+  #preloader{
+    position:fixed;inset:0;z-index:20000;background:var(--black);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+    transition:transform 1s var(--ease), opacity .8s ease;
+  }
+  #preloader.hide{transform:translateY(-100%);opacity:0.4;}
+  .pre-logo{font-family:'Bebas Neue';font-size:14vw;letter-spacing:2px;line-height:.8;display:flex;align-items:center;gap:14px;}
+  .pre-logo .bar{width:60px;height:2px;background:var(--white);}
+  .pre-bar-track{width:220px;height:1px;background:var(--line);position:relative;overflow:hidden;}
+  .pre-bar-fill{position:absolute;left:0;top:0;height:100%;width:0%;background:var(--white);}
+  .pre-pct{font-size:11px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;}
+
+  /* ---------- layout helpers ---------- */
+  .wrap{max-width:1360px;margin:0 auto;padding-left:6vw;padding-right:6vw;}
+  section{position:relative;}
+  .eyebrow{
+    font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--dim);
+    display:flex;align-items:center;gap:12px;margin-bottom:22px;
+  }
+  .eyebrow::before{content:'';width:34px;height:1px;background:var(--dim);}
+  .num{font-family:'Bebas Neue';color:var(--dim);}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(48px);transition:opacity 1s var(--ease), transform 1.1s var(--ease);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+  .reveal-child > *{opacity:0;transform:translateY(30px);transition:opacity .8s var(--ease), transform .9s var(--ease);}
+  .reveal-child.in > *{opacity:1;transform:translateY(0);}
+  .reveal-child.in > *:nth-child(1){transition-delay:.05s}
+  .reveal-child.in > *:nth-child(2){transition-delay:.14s}
+  .reveal-child.in > *:nth-child(3){transition-delay:.23s}
+  .reveal-child.in > *:nth-child(4){transition-delay:.32s}
+  .reveal-child.in > *:nth-child(5){transition-delay:.41s}
+  .reveal-child.in > *:nth-child(6){transition-delay:.5s}
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:500;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:26px 6vw; mix-blend-mode:difference;
+    transition:padding .4s var(--ease);
+  }
+  header.scrolled{padding:16px 6vw;}
+  .logo{
+    display:flex;align-items:center;gap:10px;font-family:'Bebas Neue';font-size:26px;letter-spacing:1px;color:var(--white);
+  }
+  .logo .ln{width:22px;height:1.5px;background:var(--white);}
+  .logo-img{height:24px;width:auto;display:block;}
+  nav.mainnav{display:flex;gap:38px;}
+  nav.mainnav a{
+    font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--white);
+    position:relative;padding-bottom:4px;
+  }
+  nav.mainnav a::after{
+    content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--white);
+    transition:width .35s var(--ease);
+  }
+  nav.mainnav a:hover::after{width:100%;}
+  .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:600;}
+  .burger span{width:26px;height:1.5px;background:var(--white);}
+
+  /* mobile nav */
+  #mobileNav{
+    position:fixed;inset:0;background:var(--black);z-index:400;
+    display:flex;flex-direction:column;justify-content:center;gap:26px;padding:0 8vw;
+    transform:translateY(-100%); transition:transform .6s var(--ease);
+  }
+  #mobileNav.open{transform:translateY(0);}
+  #mobileNav a{font-family:'Bebas Neue';font-size:44px;letter-spacing:1px;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    height:100svh;min-height:640px;position:relative;display:flex;align-items:flex-end;overflow:hidden;
+  }
+  .hero-media{position:absolute;inset:0;overflow:hidden;}
+  .hero-bg-slides{
+    position:absolute;inset:0;
+    transform:scale(1.12);
+    animation:heroIn 2.4s var(--ease) forwards;
+  }
+  .hero-bg-slide{
+    position:absolute;inset:0;
+    width:100%;height:100%;object-fit:cover;object-position:50% 22%;
+    filter:grayscale(1) contrast(1.15) brightness(.62);
+    opacity:0;
+    transition:opacity 1.8s ease-in-out;
+  }
+  .hero-bg-slide.active{ opacity:1; }
+  @keyframes heroIn{ to{ transform:scale(1.0); } }
+  .hero-media::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(10,10,10,.35) 0%, rgba(10,10,10,.25) 40%, rgba(10,10,10,.95) 100%);
+  }
+  .hero-inner{position:relative;z-index:2;width:100%;padding:0 6vw 64px;}
+  .hero-kicker{
+    font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--dim);margin-bottom:18px;
+    overflow:hidden;
+  }
+  .hero-kicker span{display:inline-block;transform:translateY(120%);animation:kickerUp .9s var(--ease) .3s forwards;}
+  @keyframes kickerUp{to{transform:translateY(0);}}
+  .hero h1{
+    font-family:'Bebas Neue';
+    font-size:clamp(56px,10.4vw,168px);
+    line-height:.86;letter-spacing:1px;
+    display:flex;flex-direction:column;
+  }
+  .hero h1 .line{overflow:hidden;}
+  .hero h1 .line:nth-child(2){font-size:clamp(24px,7vw,108px);}
+  .hero h1 .line span{display:inline-block;transform:translateY(115%);animation:lineUp 1.1s var(--ease) forwards;}
+  .hero h1 .line:nth-child(1) span{animation-delay:.15s;}
+  .hero h1 .line:nth-child(2) span{animation-delay:.32s;}
+  @keyframes lineUp{to{transform:translateY(0);}}
+  .hero-foot{
+    display:flex;justify-content:space-between;align-items:flex-end;margin-top:34px;
+    border-top:1px solid var(--line);padding-top:22px;gap:20px;flex-wrap:wrap;
+  }
+  .hero-sub{max-width:420px;font-size:15px;color:#cfcdc6;line-height:1.7;font-weight:300;
+    opacity:0;animation:fadeUp 1s var(--ease) 1s forwards;}
+  .hero-loc{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);text-align:right;
+    opacity:0;animation:fadeUp 1s var(--ease) 1.15s forwards;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  .scroll-cue{
+    position:absolute;right:6vw;bottom:28px;z-index:3;display:flex;flex-direction:column;align-items:center;gap:10px;
+    color:var(--dim);font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  }
+  .scroll-cue .stick{width:1px;height:46px;background:var(--line);position:relative;overflow:hidden;}
+  .scroll-cue .stick::after{content:'';position:absolute;left:0;top:-40%;width:100%;height:40%;background:var(--white);animation:cueMove 1.8s ease-in-out infinite;}
+  @keyframes cueMove{0%{top:-40%}60%{top:100%}100%{top:100%}}
+
+  /* ---------- marquee ---------- */
+  .marquee-wrap{
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    overflow:hidden;padding:16px 0;background:var(--near-black);
+  }
+  .marquee-track{display:flex;width:max-content;animation:marquee 26s linear infinite;}
+  .marquee-track span{
+    font-family:'Bebas Neue';font-size:clamp(24px,4vw,46px);letter-spacing:1px;color:transparent;
+    -webkit-text-stroke:1px var(--white); padding:0 26px; white-space:nowrap; display:flex;align-items:center;gap:26px;
+  }
+  .marquee-track span.solid{-webkit-text-stroke:0;color:var(--dim);}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---------- section spacing ---------- */
+  .section{padding:150px 0;}
+  .section.tight{padding:110px 0;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;margin-bottom:64px;}
+  h2.big{
+    font-family:'Bebas Neue';font-size:clamp(40px,6.4vw,96px);line-height:.92;letter-spacing:1px;
+  }
+  .section-head .num{font-size:16px;letter-spacing:2px;}
+
+  /* ---------- about ---------- */
+  .about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:80px;align-items:start;}
+  .about-grid p{font-size:19px;line-height:1.75;color:#d8d6d0;font-weight:300;margin-bottom:22px;}
+  .about-grid p.lead{font-size:26px;line-height:1.5;color:var(--white);font-family:'Instrument Serif';font-style:italic;font-weight:400;}
+  .mission-box{
+    border:1px solid var(--line);padding:34px;margin-top:16px;position:relative;
+  }
+  .mission-box .num{position:absolute;top:-14px;left:28px;background:var(--black);padding:0 10px;font-size:14px;}
+  .mission-box .label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;}
+  .mission-box p{font-size:17px;line-height:1.6;color:var(--white);font-weight:400;margin:0;}
+  .about-media{position:relative;aspect-ratio:3/4;overflow:hidden;}
+  .about-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1);transition:transform 1.2s var(--ease);}
+  .about-media:hover img{transform:scale(1.06);}
+  .about-media .frame-tag{
+    position:absolute;bottom:16px;left:16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--white);background:rgba(10,10,10,.55);padding:8px 12px;backdrop-filter:blur(2px);
+  }
+
+  /* ---------- services ---------- */
+  .services-list{border-top:1px solid var(--line);}
+  .service-row{
+    border-bottom:1px solid var(--line); padding:36px 0; display:grid;
+    grid-template-columns:70px 1fr 1.3fr; gap:30px; align-items:start;
+    cursor:pointer; transition:background .4s;
+  }
+  .service-row:hover{background:var(--line-soft);}
+  .service-row .num{font-size:15px;padding-top:4px;}
+  .service-row h3{
+    font-family:'Bebas Neue';font-size:clamp(26px,3.2vw,42px);letter-spacing:.5px;
+    display:flex;align-items:center;gap:16px;
+  }
+  .service-row .arrow{display:inline-block;transition:transform .4s var(--ease);font-size:20px;color:var(--dim);}
+  .service-row:hover .arrow{transform:translateX(8px) rotate(0deg);color:var(--white);}
+  .service-sub{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;}
+  .service-sub span{
+    font-size:13px;color:var(--dim);letter-spacing:.3px;position:relative;padding-left:14px;
+  }
+  .service-sub span::before{content:'';position:absolute;left:0;top:50%;width:6px;height:1px;background:var(--dim);transform:translateY(-50%);}
+
+  /* ---------- gallery ---------- */
+  .gallery{
+    columns:4 260px; column-gap:14px;
+  }
+  .g-item{
+    break-inside:avoid; margin-bottom:14px; position:relative; overflow:hidden; background:#111;
+    opacity:0; transform:translateY(40px); transition:opacity .9s var(--ease), transform .9s var(--ease);
+  }
+  .g-item.in{opacity:1;transform:translateY(0);}
+  .g-item img{width:100%;display:block;filter:grayscale(1) contrast(1.12);transition:transform 1s var(--ease), filter .6s;}
+  .g-item:hover img{transform:scale(1.08);filter:grayscale(.15) contrast(1.15);}
+  .g-item .tag{
+    position:absolute;left:14px;bottom:14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--white); opacity:0; transform:translateY(10px); transition:all .4s var(--ease);
+    background:rgba(10,10,10,.5); padding:6px 10px;
+  }
+  .g-item:hover .tag{opacity:1;transform:translateY(0);}
+  .g-item::before{
+    content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%, rgba(0,0,0,.65) 100%);
+    opacity:0;transition:opacity .4s;
+  }
+  .g-item:hover::before{opacity:1;}
+
+  /* ---------- editorial lists (recent/previous/shorts) ---------- */
+  .edi-cols{display:grid;grid-template-columns:1fr 1fr;gap:70px;}
+  .edi-list{list-style:none;}
+  .edi-list li{
+    display:flex;justify-content:space-between;gap:20px;padding:18px 0;border-bottom:1px solid var(--line-soft);
+    font-size:16px;color:#d8d6d0;
+  }
+  .edi-list li b{color:var(--white);font-weight:500;}
+  .edi-list li small{color:var(--dim);font-size:12px;letter-spacing:1px;white-space:nowrap;padding-left:14px;}
+  .edi-title{font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;margin-bottom:20px;color:var(--dim);}
+
+  /* ---------- team ---------- */
+  .team-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:80px;align-items:center;}
+  .team-media{position:relative;aspect-ratio:4/5;overflow:hidden;}
+  .team-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1);}
+  .team-name{font-family:'Bebas Neue';font-size:clamp(34px,4.4vw,58px);letter-spacing:.5px;margin-bottom:6px;}
+  .team-role{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:26px;}
+  .team-grid p{font-size:16.5px;line-height:1.75;color:#d8d6d0;margin-bottom:20px;font-weight:300;}
+  .team-meta{display:flex;gap:50px;margin-top:28px;flex-wrap:wrap;}
+  .team-meta div span{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+  .team-meta div p{font-size:15px;color:var(--white);margin:0;}
+  .founder-signature{height:34px;width:auto;margin-top:32px;opacity:.9;}
+
+  .network-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);margin-top:60px;}
+  .network-item{background:var(--black);padding:30px 22px;min-height:170px;display:flex;flex-direction:column;justify-content:space-between;transition:background .4s;}
+  .network-item:hover{background:var(--panel);}
+  .network-item .num{font-size:13px;}
+  .network-item h4{font-family:'Bebas Neue';font-size:20px;letter-spacing:.5px;margin-top:20px;}
+
+  /* ---------- on set ---------- */
+  .onset-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:70px;align-items:start;}
+  .onset-imgs{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .onset-imgs img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1);aspect-ratio:3/4;transition:transform 1s var(--ease);}
+  .onset-imgs a{overflow:hidden;display:block;}
+  .onset-imgs a:hover img{transform:scale(1.08);}
+  .onset-imgs a:nth-child(1){grid-row:span 2;}
+  .onset-note{border-left:1px solid var(--line);padding-left:28px;margin-bottom:30px;}
+  .onset-note h4{font-family:'Bebas Neue';font-size:22px;letter-spacing:.5px;margin-bottom:10px;}
+  .onset-note p{font-size:15.5px;line-height:1.7;color:#c9c7c0;font-weight:300;}
+
+  /* ---------- clients ---------- */
+  .clients-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--line);}
+  .client-cat{border-bottom:1px solid var(--line);padding:26px 0;}
+  .client-cat:nth-child(odd){border-right:1px solid var(--line);padding-right:30px;}
+  .client-cat:nth-child(even){padding-left:30px;}
+  .client-cat h5{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;}
+  .client-cat p{font-family:'Bebas Neue';font-size:clamp(18px,2vw,26px);letter-spacing:.5px;line-height:1.35;}
+  .agency-note{margin-top:40px;font-size:14.5px;color:var(--dim);max-width:640px;line-height:1.7;}
+
+  /* ---------- why ---------- */
+  .why-list{counter-reset:why;margin-top:20px;}
+  .why-item{
+    counter-increment:why; display:grid;grid-template-columns:80px 1fr;gap:26px;
+    padding:30px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .why-item::before{
+    content:counter(why,decimal-leading-zero); font-family:'Bebas Neue';font-size:34px;color:var(--dim);
+  }
+  .why-item h4{font-family:'Bebas Neue';font-size:24px;letter-spacing:.5px;margin-bottom:8px;}
+  .why-item p{font-size:15.5px;color:#c9c7c0;line-height:1.7;font-weight:300;max-width:640px;}
+
+  /* ---------- contact / footer ---------- */
+  .contact{
+    background:var(--near-black); border-top:1px solid var(--line);
+  }
+  .contact-cta{
+    font-family:'Bebas Neue'; font-size:clamp(46px,8.6vw,132px); line-height:.92; letter-spacing:.5px;
+    max-width:1100px;
+  }
+  .contact-cta .serif{font-family:'Instrument Serif';font-style:italic;font-weight:400;text-transform:none;font-size:.62em;letter-spacing:0;}
+  .magnetic-btn{
+    display:inline-flex;align-items:center;gap:14px;border:1px solid var(--line);
+    padding:20px 32px;border-radius:100px;margin-top:50px;font-size:13px;letter-spacing:2px;text-transform:uppercase;
+    transition:background .4s,color .4s,border-color .4s; position:relative; overflow:hidden;
+  }
+  .magnetic-btn:hover{background:var(--white);color:var(--black);border-color:var(--white);}
+  .contact-grid{display:flex;justify-content:space-between;margin-top:90px;flex-wrap:wrap;gap:40px;border-top:1px solid var(--line);padding-top:40px;}
+  .contact-grid div span{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;}
+  .contact-grid div a, .contact-grid div p{font-size:16px;}
+  .contact-grid div p{color:var(--dim);}
+  footer{
+    display:flex;justify-content:space-between;padding:30px 0 50px;font-size:11px;letter-spacing:1px;color:var(--dim);
+    flex-wrap:wrap;gap:10px;
+  }
+
+  /* ---------- responsive ---------- */
+  @media(max-width:980px){
+    nav.mainnav{display:none;}
+    .burger{display:flex;}
+    .about-grid,.team-grid,.onset-grid{grid-template-columns:1fr;}
+    .about-media{order:-1;aspect-ratio:16/10;}
+    .network-grid{grid-template-columns:repeat(2,1fr);}
+    .clients-grid{grid-template-columns:1fr;}
+    .client-cat:nth-child(odd){border-right:0;padding-right:0;}
+    .client-cat:nth-child(even){padding-left:0;}
+    .edi-cols{grid-template-columns:1fr;gap:40px;}
+    .service-row{grid-template-columns:40px 1fr;}
+    .service-row .service-sub{grid-column:1/-1;margin-top:14px;}
+    .gallery{columns:2 200px;}
+    .why-item{grid-template-columns:50px 1fr;}
+  }
+  @media(max-width:560px){
+    .hero{height:auto;min-height:100svh;padding-bottom:40px;}
+    .hero h1{font-size:clamp(38px,13vw,168px);}
+    .hero-foot{flex-direction:column;align-items:flex-start;}
+    .hero-loc{text-align:left;}
+    .gallery{columns:1;}
+    .section{padding:100px 0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div id="preloader">
+  <div class="pre-logo"><div class="bar"></div>JF<div class="bar"></div></div>
+  <div class="pre-bar-track"><div class="pre-bar-fill" id="preFill"></div></div>
+  <div class="pre-pct" id="prePct">Loading 0%</div>
+</div>
+
+<header id="siteHeader">
+  <a href="#top" class="logo" data-hover><img src="assets/img/jf-logo.png" alt="JF Media Production" class="logo-img"></a>
+  <nav class="mainnav">
+    <a href="#about" data-hover>About</a>
+    <a href="#services" data-hover>Services</a>
+    <a href="#work" data-hover>Work</a>
+    <a href="#team" data-hover>Team</a>
+    <a href="#clients" data-hover>Clients</a>
+    <a href="#contact" data-hover>Contact</a>
+  </nav>
+  <div class="burger" id="burger" data-hover><span></span><span></span><span></span></div>
+</header>
+
+<div id="mobileNav">
+  <a href="#about" data-hover>About</a>
+  <a href="#services" data-hover>Services</a>
+  <a href="#work" data-hover>Work</a>
+  <a href="#team" data-hover>Team</a>
+  <a href="#clients" data-hover>Clients</a>
+  <a href="#contact" data-hover>Contact</a>
+</div>
+
+<a id="top"></a>
+<section class="hero">
+  <div class="hero-media">
+  <div class="hero-bg-slides">
+    <img class="hero-bg-slide active" src="assets/img/landing-bg/landing-bg-01.jpeg" alt="JF Media Production behind the scenes">
+    <img class="hero-bg-slide" src="assets/img/landing-bg/landing-bg-02.jpeg" alt="JF Media Production behind the scenes">
+    <img class="hero-bg-slide" src="assets/img/landing-bg/landing-bg-03.jpeg" alt="JF Media Production behind the scenes">
+    <img class="hero-bg-slide" src="assets/img/landing-bg/landing-bg-04.jpeg" alt="JF Media Production behind the scenes">
+    <img class="hero-bg-slide" src="assets/img/landing-bg/landing-bg-05.jpeg" alt="JF Media Production behind the scenes">
+    <img class="hero-bg-slide" src="assets/img/landing-bg/landing-bg-06.jpeg" alt="JF Media Production behind the scenes">
+    <img class="hero-bg-slide" src="assets/img/landing-bg/landing-bg-07.jpeg" alt="JF Media Production behind the scenes">
+  </div>
+</div>
+  <div class="hero-inner">
+    <div class="hero-kicker"><span>Media Production Studio — Cairo, Egypt</span></div>
+    <h1>
+      <div class="line"><span>JF</span></div>
+      <div class="line"><span>MEDIA PRODUCTION HOUSE</span></div>
+    </h1>
+    <div class="hero-foot">
+      <p class="hero-sub">Commercials · Filmmaking · Photography · Post-Production — authentic storytelling through stunning visuals, built by John Farag Fared since 2020.</p>
+      <div class="hero-loc">Founded 2020<br>Cairo, Egypt</div>
+    </div>
+  </div>
+  </section>
+
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>Filmmaking <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Photography</span>
+    <span>Post-Production <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Commercials</span>
+    <span>Art Direction <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Filmmaking</span>
+    <span>Photography <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Post-Production</span>
+    <span>Commercials <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Art Direction</span>
+    <!-- duplicate for seamless loop -->
+    <span>Filmmaking <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Photography</span>
+    <span>Post-Production <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Commercials</span>
+    <span>Art Direction <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Filmmaking</span>
+    <span>Photography <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Post-Production</span>
+    <span>Commercials <b style="color:var(--dim)">/</b></span>
+    <span class="solid">Art Direction</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">01 / About</div>
+      <div class="num">A media production studio built on specialist collaboration.</div>
+    </div>
+    <div class="about-grid">
+      <div class="reveal">
+        <p class="lead">"We believe in the power of authentic storytelling through stunning visuals. Every project is an opportunity to transform ideas into impactful content that resonates with audiences."</p>
+        <p>JF Media Production is a media production studio founded in 2020 by John Farag Fared — photographer, filmmaker, and director working across commercials, film, and photography.</p>
+        <p>The studio operates on a collaborative production model: for each project we assemble a dedicated crew of directors, cinematographers, and technicians who specialize in that specific craft — rather than forcing every job through one fixed in-house team.</p>
+        <div class="mission-box">
+          <span class="num">Mission</span>
+          <div class="label">Our Mission</div>
+          <p>To deliver world-class media production that elevates brands and tells their stories through excellence in filmmaking, photography, and commercial content.</p>
+        </div>
+      </div>
+      <div class="about-media reveal">
+        <img src="assets/img/work-tablescape.jpg" alt="Studio production still">
+        <div class="frame-tag">On Location — Studio Still</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section tight" id="services">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2 class="big">Services</h2>
+      <div class="num">02 / What We Do</div>
+    </div>
+    <div class="services-list reveal">
+      <div class="service-row" data-hover>
+        <div class="num">01</div>
+        <h3>Film &amp; Video <span class="arrow">→</span></h3>
+        <div class="service-sub">
+          <span>Commercials &amp; Brand Films</span><span>Video Production &amp; Filmmaking</span><span>AI-Assisted Film &amp; Content Production</span>
+        </div>
+      </div>
+      <div class="service-row" data-hover>
+        <div class="num">02</div>
+        <h3>Photography <span class="arrow">→</span></h3>
+        <div class="service-sub">
+          <span>Product Photography</span><span>Food Photography</span><span>Architectural Photography</span><span>Portrait &amp; Fine Art Photography</span>
+        </div>
+      </div>
+      <div class="service-row" data-hover>
+        <div class="num">03</div>
+        <h3>Post-Production &amp; Design <span class="arrow">→</span></h3>
+        <div class="service-sub">
+          <span>Editing &amp; Color Grading</span><span>Sound Design &amp; Motion Graphics</span><span>Art Direction</span>
+        </div>
+      </div>
+      <div class="service-row" data-hover>
+        <div class="num">04</div>
+        <h3>Events &amp; Consulting <span class="arrow">→</span></h3>
+        <div class="service-sub">
+          <span>Events &amp; Media Covering</span><span>Creative Consulting</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK / GALLERY -->
+<section class="section" id="work">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2 class="big">Selected Work</h2>
+      <div class="num">03 / A Sample of Previous Projects</div>
+    </div>
+    <div class="gallery" id="gallery">
+      <div class="g-item"><img src="assets/img/work-campaign.jpg" alt="Brand campaign photography"><div class="tag">Campaign · Editorial</div></div>
+      <div class="g-item"><img src="assets/img/work-portrait-01.jpg" alt="Portrait photography"><div class="tag">Portrait</div></div>
+      <div class="g-item"><img src="assets/img/work-flatlay.jpg" alt="Product flat-lay"><div class="tag">Product · Flat Lay</div></div>
+      <div class="g-item"><img src="assets/img/work-fineart-wings.jpg" alt="Fine art photography"><div class="tag">Fine Art</div></div>
+      <div class="g-item"><img src="assets/img/work-product-hair.jpg" alt="Product photography"><div class="tag">Product</div></div>
+      <div class="g-item"><img src="assets/img/work-food-03.jpg" alt="Food photography"><div class="tag">Food</div></div>
+      <div class="g-item"><img src="assets/img/work-portrait-blinds.jpg" alt="Portrait with light and shadow"><div class="tag">Portrait · Light</div></div>
+      <div class="g-item"><img src="assets/img/work-product-bag.jpg" alt="Product photography bag"><div class="tag">Product</div></div>
+      <div class="g-item"><img src="assets/img/work-portrait-02.jpg" alt="Fashion portrait"><div class="tag">Fashion</div></div>
+      <div class="g-item"><img src="assets/img/work-food-02.jpg" alt="Food texture photography"><div class="tag">Food · Texture</div></div>
+      <div class="g-item"><img src="assets/img/work-smoke-portrait.jpg" alt="Portrait with camera on set"><div class="tag">On Set</div></div>
+      <div class="g-item"><img src="assets/img/work-letshoot.jpg" alt="Behind the scenes portrait"><div class="tag">Behind the Scenes</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EDITORIAL LISTS -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2 class="big">Filmography &amp; Clients</h2>
+      <div class="num">04 / Recent &amp; Previous Work</div>
+    </div>
+    <div class="edi-cols reveal-child">
+      <div>
+        <div class="edi-title">Recent Work</div>
+        <ul class="edi-list">
+          <li><b>AI Films — Real Estate</b><small>AI-generated property series</small></li>
+          <li><b>Palmier Developments</b><small>Ongoing AI film &amp; content</small></li>
+          <li><b>Notch Studio</b><small>Full-time collaboration, 2025</small></li>
+          <li><b>Ya Coach</b><small>Video &amp; full media coverage</small></li>
+          <li><b>Qweidar</b><small>Photography</small></li>
+        </ul>
+        <div class="edi-title" style="margin-top:44px;">Short Films</div>
+        <ul class="edi-list">
+          <li><b>Within</b><small>Experimental short · dir. &amp; prod. John Farag · 2023</small></li>
+          <li><b>Beyond My Zone</b><small>Dance film · dir. &amp; prod. Mario Seha · 2022</small></li>
+          <li><b>If I May</b><small>Dance film · dir. Nermin Habib, prod. CCDC · 2021</small></li>
+          <li><b>Corner</b><small>Experimental short · dir. George Karam, prod. John Farag</small></li>
+        </ul>
+      </div>
+      <div>
+        <div class="edi-title">Previous Work</div>
+        <ul class="edi-list">
+          <li><b>SAKAN</b><small>Architectural photography</small></li>
+          <li><b>MOKARI</b><small>Brand campaign</small></li>
+          <li><b>Vastec</b><small>Product &amp; brand content</small></li>
+          <li><b>Latoya</b><small>Fashion &amp; portrait</small></li>
+          <li><b>ik world</b><small>Brand content</small></li>
+          <li><b>Reese</b><small>Product content</small></li>
+          <li><b>Odai Berri</b><small>Commercial</small></li>
+          <li><b>Catalogue</b><small>Product catalogue photography</small></li>
+          <li><b>EGY Organizers</b><small>Event documentation</small></li>
+          <li><b>Stuck in Nostalgia</b><small>Fine art photography series</small></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="section" id="team">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">05 / The Team</div>
+      <div class="num">Founder &amp; Director</div>
+    </div>
+    <div class="team-grid">
+      <div class="team-media reveal"><img src="assets/img/founder-cover.jpg" alt="John Farag Fared, Founder & Director"></div>
+      <div class="reveal">
+        <div class="team-name">John Farag Fared</div>
+        <div class="team-role">Founder &amp; Director</div>
+        <p>John founded JF Media Production in 2020, bringing a background in fine arts and architecture to commercial production. He leads projects end to end — from concept and script through on-set direction to final color grade.</p>
+        <p>His work spans real estate, hospitality, fashion, and commercial sectors, and he currently produces AI-assisted film content for Palmier Developments.</p>
+        <div class="team-meta">
+          <div><span>Specialties</span><p>Filmmaking, Photography,<br>Art Direction, Commercials</p></div>
+          <div><span>Education</span><p>Fine Arts — Architecture,<br>Minia University</p></div>
+        </div>
+        <img src="assets/img/an-eye-and-a-keen-eye.png" alt="An eye and a keen eye — John Farag Fared" class="founder-signature">
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="eyebrow" style="margin-top:110px;">Our Production Network</div>
+      <p style="max-width:680px;color:#c9c7c0;font-size:16px;line-height:1.7;font-weight:300;">JF Media Production works with a trusted network of specialists, assembled per project — every production draws on people who do that one thing exceptionally well.</p>
+      <div class="network-grid">
+        <div class="network-item"><span class="num">01</span><h4>Directors</h4></div>
+        <div class="network-item"><span class="num">02</span><h4>Cinematography &amp; Camera</h4></div>
+        <div class="network-item"><span class="num">03</span><h4>Art Department</h4></div>
+        <div class="network-item"><span class="num">04</span><h4>Post-Production</h4></div>
+        <div class="network-item"><span class="num">05</span><h4>Production Management</h4></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ON SET -->
+<section class="section tight" id="onset">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2 class="big">On Set</h2>
+      <div class="num">06 / Behind the Scenes</div>
+    </div>
+    <div class="onset-grid">
+      <div class="reveal">
+        <div class="onset-note">
+          <h4>Client Involvement</h4>
+          <p>Clients are welcome on set. We share dailies and rough selects during the shoot so feedback happens while we can still act on it.</p>
+        </div>
+        <div class="onset-note">
+          <h4>BTS as Deliverable</h4>
+          <p>On request, we produce a dedicated BTS package — stills and a short edit — that brands use for social content, pitch decks, and internal communications.</p>
+        </div>
+        <div class="onset-note">
+          <h4>Archive</h4>
+          <p>Every project is archived with its BTS material, giving clients a documented record of their production.</p>
+        </div>
+      </div>
+      <div class="onset-imgs reveal">
+        <a href="#" data-hover><img src="assets/img/bts-camera-man.jpg" alt="Behind the scenes"></a>
+        <a href="#" data-hover><img src="assets/img/bts-smoke-01.jpg" alt="Behind the scenes"></a>
+        <a href="#" data-hover><img src="assets/img/bts-night.jpg" alt="Behind the scenes"></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTS -->
+<section class="section" id="clients">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2 class="big">Clients &amp; Partners</h2>
+      <div class="num">07 / Since 2020</div>
+    </div>
+    <p class="reveal" style="max-width:680px;font-size:17px;line-height:1.7;color:#d8d6d0;margin-bottom:10px;">Since 2020, JF Media Production has produced content for brands, agencies, and organizations across Egypt.</p>
+    <div class="clients-grid reveal">
+      <div class="client-cat"><h5>Real Estate &amp; Development</h5><p>Palmier Developments · SAKAN · Smart Home · White Gold · Vastec</p></div>
+      <div class="client-cat"><h5>Hospitality &amp; F&amp;B</h5><p>SPADE · AZIZ · Yummi Sushi · DAVINCI · House Party · Horeca Academy</p></div>
+      <div class="client-cat"><h5>Retail &amp; Lifestyle</h5><p>MOKARI · QUEENZ · MK Store · DESIGNY · TOMMY · Latoya · ik world · Reese</p></div>
+      <div class="client-cat"><h5>Agencies &amp; Production Partners</h5><p>Media Bots · Adwahles · Notch Studio</p></div>
+      <div class="client-cat"><h5>Technology</h5><p>IMOX</p></div>
+      <div class="client-cat"><h5>Culture &amp; Non-Profit</h5><p>Misryaty · Echo for Arts · Better Life · EGY Organizers</p></div>
+    </div>
+    <p class="agency-note reveal">Agency Collaborations — through Media Bots, our work has contributed to campaigns for Nestlé, SC Bank, Tamweely, and Coda.</p>
+  </div>
+</section>
+
+<!-- WHY JF -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2 class="big">Why JF Media Production?</h2>
+      <div class="num">08 / The Difference</div>
+    </div>
+    <div class="why-list reveal">
+      <div class="why-item"><div><h4>One Vision, Every Stage</h4><p>John leads every project personally, from script to final color grade, so nothing gets lost between departments.</p></div></div>
+      <div class="why-item"><div><h4>A Background Most Studios Don't Have</h4><p>A fine arts and architecture foundation shapes how we frame, light, and direct.</p></div></div>
+      <div class="why-item"><div><h4>The Right Crew, Every Time</h4><p>We don't force every project through the same fixed team; we bring in the director or technician each job actually needs.</p></div></div>
+      <div class="why-item"><div><h4>Range That's Been Tested</h4><p>From real estate and architecture to restaurants, retail, and non-profits, across 20+ brands since 2020.</p></div></div>
+      <div class="why-item"><div><h4>Ahead of the Curve</h4><p>One of the first studios in the market producing AI-assisted film content.</p></div></div>
+      <div class="why-item"><div><h4>Cairo-Based, Egypt-Wide</h4><p>On the ground for shoots across the country.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact section" id="contact">
+  <div class="wrap">
+    <div class="eyebrow reveal">Get In Touch</div>
+    <h2 class="contact-cta reveal">Ready to bring your<br>brand's story <span class="serif">to screen?</span></h2>
+    <a href="mailto:jfared99@gmail.com" class="magnetic-btn reveal" data-hover>Let's create something extraordinary — Email John →</a>
+
+    <div class="contact-grid reveal-child">
+      <div><span>Email</span><a href="mailto:jfared99@gmail.com" data-hover>jfared99@gmail.com</a></div>
+      <div><span>Phone</span><a href="tel:+201032003610" data-hover>+20 103 200 3610</a></div>
+      <div><span>Instagram</span><a href="https://instagram.com/_jf_vv" target="_blank" rel="noopener" data-hover>@_jf_vv</a></div>
+      <div><span>Behance</span><a href="https://behance.net/johnfarag99" target="_blank" rel="noopener" data-hover>behance.net/johnfarag99</a></div>
+      <div><span>Location</span><p>Cairo, Egypt</p></div>
+    </div>
+
+    <footer>
+      <span>&copy; 2020–2026 JF Media Production. All rights reserved.</span>
+      <span>Design Preview — Built for review purposes.</span>
+    </footer>
+  </div>
+</section>
+
+<script>
+(function(){
+  // ---------- pointer support check ----------
+  const fine = window.matchMedia('(pointer:fine)').matches;
+  if(!fine){ document.body.classList.add('no-fine-pointer'); }
+
+  // ---------- preloader ----------
+  const preFill = document.getElementById('preFill');
+  const prePct = document.getElementById('prePct');
+  const preloader = document.getElementById('preloader');
+  let pct = 0;
+  const imgs = document.images.length;
+  let loaded = 0;
+  function bump(){
+    loaded++;
+    const target = Math.min(100, Math.round((loaded/Math.max(imgs,1))*100));
+    pct = target;
+  }
+  Array.from(document.images).forEach(img=>{
+    if(img.complete) bump();
+    else { img.addEventListener('load', bump); img.addEventListener('error', bump); }
+  });
+  let fakeTimer = setInterval(()=>{
+    let display = Math.min(pct, 99);
+    preFill.style.width = display + '%';
+    prePct.textContent = 'Loading ' + display + '%';
+    if(pct>=100){
+      clearInterval(fakeTimer);
+      preFill.style.width='100%';
+      prePct.textContent='Loading 100%';
+      setTimeout(()=>{ preloader.classList.add('hide'); document.body.style.overflow='auto'; },350);
+    }
+  },60);
+  // safety fallback in case some images never fire load (cache edge cases)
+  setTimeout(()=>{ pct = 100; }, 3000);
+
+  // ---------- custom cursor ----------
+  if(fine){
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mx=0,my=0, rx=0, ry=0;
+    window.addEventListener('mousemove', e=>{
+      mx=e.clientX; my=e.clientY;
+      dot.style.left = mx+'px'; dot.style.top = my+'px';
+    });
+    function raf(){
+      rx += (mx-rx)*0.18; ry += (my-ry)*0.18;
+      ring.style.left = rx+'px'; ring.style.top = ry+'px';
+      requestAnimationFrame(raf);
+    }
+    raf();
+    document.querySelectorAll('[data-hover], a, .g-item').forEach(el=>{
+      el.addEventListener('mouseenter', ()=>ring.classList.add('big'));
+      el.addEventListener('mouseleave', ()=>ring.classList.remove('big'));
+    });
+  }
+
+  // ---------- header scroll state ----------
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', ()=>{
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  }, {passive:true});
+
+  // ---------- mobile nav ----------
+  const burger = document.getElementById('burger');
+  const mobileNav = document.getElementById('mobileNav');
+  burger.addEventListener('click', ()=>{
+    mobileNav.classList.toggle('open');
+  });
+  mobileNav.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>mobileNav.classList.remove('open')));
+
+  // ---------- reveal on scroll ----------
+  const revealEls = document.querySelectorAll('.reveal, .reveal-child, .g-item');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.15, rootMargin:'0px 0px -60px 0px'});
+  revealEls.forEach(el=>io.observe(el));
+
+  // ---------- hero background slideshow ----------
+  const heroSlides = document.querySelectorAll('.hero-bg-slide');
+  let heroSlideIndex = 0;
+  if(heroSlides.length){
+    setInterval(()=>{
+      heroSlides[heroSlideIndex].classList.remove('active');
+      heroSlideIndex = (heroSlideIndex + 1) % heroSlides.length;
+      heroSlides[heroSlideIndex].classList.add('active');
+    }, 4500);
+  }
+
+  // ---------- hero parallax ----------
+  const heroBgSlides = document.querySelector('.hero-bg-slides');
+  window.addEventListener('scroll', ()=>{
+    const y = window.scrollY;
+    if(heroBgSlides && y < window.innerHeight){
+      heroBgSlides.style.transform = 'scale(1.0) translateY(' + (y*0.18) + 'px)';
+    }
+  }, {passive:true});
+
+})();
+</script>
+
+</body>
+</html>
