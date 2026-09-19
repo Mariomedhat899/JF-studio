@@ -489,12 +489,12 @@
     <div class="about-grid">
       <div class="reveal">
         <p class="lead">"We believe in the power of authentic storytelling through stunning visuals. Every project is an opportunity to transform ideas into impactful content that resonates with audiences."</p>
-        <p>JF Media Production is a media production studio founded in 2020 by John Farag Fared — photographer, filmmaker, and director working across commercials, film, and photography.</p>
-        <p>The studio operates on a collaborative production model: for each project we assemble a dedicated crew of directors, cinematographers, and technicians who specialize in that specific craft — rather than forcing every job through one fixed in-house team.</p>
+        <p>JF is a media production team founded in 2020 by John Farag Fared — a multidisciplinary artist, photographer, and filmmaker working across commercials and documentaries.</p>
+        <p>The concept of JF is based on a collaborative production process: for each project we assemble a dedicated crew of directors, cinematographers, video editors, and technicians who specialize in that specific craft — rather than forcing every job through one fixed in-house team.</p>
         <div class="mission-box">
           <span class="num">Mission</span>
           <div class="label">Our Mission</div>
-          <p>To deliver world-class media production that elevates brands and tells their stories through excellence in filmmaking, photography, and commercial content.</p>
+          <p>To deliver world-class media production that elevates brands, associates, and individuals, and tells their stories through excellence in filmmaking, photography, and commercial content.</p>
         </div>
       </div>
       <div class="about-media reveal">
@@ -750,31 +750,34 @@
   const preFill = document.getElementById('preFill');
   const prePct = document.getElementById('prePct');
   const preloader = document.getElementById('preloader');
-  let pct = 0;
+  const MIN_DURATION = 2800; // preloader stays visible at least this long (kept short for UX)
+  const preStart = performance.now();
+  let imagesReady = false;
   const imgs = document.images.length;
   let loaded = 0;
   function bump(){
     loaded++;
-    const target = Math.min(100, Math.round((loaded/Math.max(imgs,1))*100));
-    pct = target;
+    if(loaded >= imgs) imagesReady = true;
   }
+  if(imgs === 0) imagesReady = true;
   Array.from(document.images).forEach(img=>{
     if(img.complete) bump();
     else { img.addEventListener('load', bump); img.addEventListener('error', bump); }
   });
   let fakeTimer = setInterval(()=>{
-    let display = Math.min(pct, 99);
+    const elapsed = performance.now() - preStart;
+    const timeProgress = Math.min(100, (elapsed / MIN_DURATION) * 100);
+    const done = elapsed >= MIN_DURATION && imagesReady;
+    let display = done ? 100 : Math.min(99, Math.round(timeProgress));
     preFill.style.width = display + '%';
     prePct.textContent = 'Loading ' + display + '%';
-    if(pct>=100){
+    if(done){
       clearInterval(fakeTimer);
-      preFill.style.width='100%';
-      prePct.textContent='Loading 100%';
       setTimeout(()=>{ preloader.classList.add('hide'); document.body.style.overflow='auto'; },350);
     }
   },60);
   // safety fallback in case some images never fire load (cache edge cases)
-  setTimeout(()=>{ pct = 100; }, 3000);
+  setTimeout(()=>{ imagesReady = true; }, Math.max(MIN_DURATION, 4000));
 
   // ---------- custom cursor ----------
   if(fine){
