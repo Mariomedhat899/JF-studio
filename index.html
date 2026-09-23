@@ -242,7 +242,7 @@
   .service-row{
     border-bottom:1px solid var(--line); padding:36px 0; display:grid;
     grid-template-columns:70px 1fr 1.3fr; gap:30px; align-items:start;
-    cursor:pointer; transition:background .4s;
+    transition:background .4s;
   }
   .service-row:hover{background:var(--line-soft);}
   .service-row .num{font-size:15px;padding-top:4px;}
@@ -250,9 +250,8 @@
     font-family:'Bebas Neue';font-size:clamp(26px,3.2vw,42px);letter-spacing:.5px;
     display:flex;align-items:center;gap:16px;
   }
-  .service-row .arrow{display:inline-block;transition:transform .4s var(--ease);font-size:20px;color:var(--dim);}
-  .service-row:hover .arrow{transform:translateX(8px) rotate(0deg);color:var(--white);}
   .service-sub{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;}
+  .service-sub span{max-width:340px;line-height:1.5;}
   .service-sub span{
     font-size:13px;color:var(--dim);letter-spacing:.3px;position:relative;padding-left:14px;
   }
@@ -296,6 +295,8 @@
   .team-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:80px;align-items:center;}
   .team-media{position:relative;aspect-ratio:4/5;overflow:hidden;}
   .team-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1);}
+  .team-media-duo{display:grid;grid-template-columns:1fr 1fr;gap:8px;aspect-ratio:8/5;}
+  .team-media-duo img{aspect-ratio:4/5;}
   .team-name{font-family:'Bebas Neue';font-size:clamp(34px,4.4vw,58px);letter-spacing:.5px;margin-bottom:6px;}
   .team-role{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:26px;}
   .team-grid p{font-size:16.5px;line-height:1.75;color:#d8d6d0;margin-bottom:20px;font-weight:300;}
@@ -513,32 +514,32 @@
       <div class="num">02 / What We Do</div>
     </div>
     <div class="services-list reveal">
-      <div class="service-row" data-hover>
+      <div class="service-row">
         <div class="num">01</div>
-        <h3>Film &amp; Video <span class="arrow">→</span></h3>
+        <h3>Video &amp; Film</h3>
         <div class="service-sub">
-          <span>Commercials &amp; Brand Films</span><span>Video Production &amp; Filmmaking</span><span>AI-Assisted Film &amp; Content Production</span>
+          <span>Cinematic Promos — Brand stories with film-quality aesthetic</span><span>Social Media Reels — High-energy vertical content for Instagram, TikTok, and Shorts</span><span>Documentaries — Authentic, narrative-driven non-fiction</span><span>Commercial Ads — Targeted video campaigns built to convert</span>
         </div>
       </div>
-      <div class="service-row" data-hover>
+      <div class="service-row">
         <div class="num">02</div>
-        <h3>Photography <span class="arrow">→</span></h3>
+        <h3>Photography</h3>
         <div class="service-sub">
-          <span>Product Photography</span><span>Food Photography</span><span>Architectural Photography</span><span>Portrait &amp; Fine Art Photography</span>
+          <span>Product &amp; E-Commerce — Clean, high-impact studio and brand imagery</span><span>Food &amp; Retail — Mouthwatering visuals and storefront showpieces</span><span>Architecture &amp; Interior — Precise spatial and structural design capture</span><span>Fashion &amp; Editorial — Expressive lookbooks and high-concept portraiture</span><span>Lifestyle &amp; Documentary — Real-world moments captured as they happen</span><span>Custom Stock — Exclusive image libraries built for your brand</span>
         </div>
       </div>
-      <div class="service-row" data-hover>
+      <div class="service-row">
         <div class="num">03</div>
-        <h3>Post-Production &amp; Design <span class="arrow">→</span></h3>
+        <h3>Post-Production</h3>
         <div class="service-sub">
-          <span>Editing &amp; Color Grading</span><span>Sound Design &amp; Motion Graphics</span><span>Art Direction</span>
+          <span>Video Editing — Seamless pacing and storytelling</span><span>Color Grading — Signature mood and visual atmosphere</span><span>Sound Design — Crisp audio, immersive FX, and balanced mix</span>
         </div>
       </div>
-      <div class="service-row" data-hover>
+      <div class="service-row">
         <div class="num">04</div>
-        <h3>Events &amp; Consulting <span class="arrow">→</span></h3>
+        <h3>Media Coverage</h3>
         <div class="service-sub">
-          <span>Events &amp; Media Covering</span><span>Creative Consulting</span>
+          <span>Event Photo &amp; Film — Full-scope visual documentation of live experiences</span><span>On-Site Reels — Same-day, fast-turnaround social content</span><span>Interviews — Polished executive, guest, and vox-pop captures</span>
         </div>
       </div>
     </div>
@@ -621,7 +622,7 @@
       <div class="num">Founder &amp; Director</div>
     </div>
     <div class="team-grid">
-      <div class="team-media reveal"><img src="assets/img/founder-cover.jpg" alt="John Farag Fared, Founder & Director"></div>
+      <div class="team-media reveal team-media-duo"><img src="assets/img/founder-portrait-01.jpg" alt="John Farag Fared, Founder & Director — on set"><img src="assets/img/founder-portrait-02.jpg" alt="John Farag Fared, Founder & Director — behind the camera"></div>
       <div class="reveal">
         <div class="team-name">John Farag Fared</div>
         <div class="team-role">Founder &amp; Director</div>
