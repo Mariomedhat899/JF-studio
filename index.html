@@ -27,6 +27,7 @@
     font-family:'Inter',sans-serif;
     font-weight:300;
     overflow-x:hidden;
+    cursor:none;
   }
   ::selection{background:var(--white);color:var(--black);}
   a{color:inherit;text-decoration:none;}
@@ -52,7 +53,21 @@
     background:radial-gradient(120% 100% at 50% 40%, transparent 40%, rgba(0,0,0,.55) 100%);
   }
 
-  /* ---------- preloader ---------- */
+    /* ---------- custom cursor ---------- */
+  .cursor-dot,.cursor-ring{
+    position:fixed;top:0;left:0;pointer-events:none;z-index:10000;
+    border-radius:50%; transform:translate(-50%,-50%);
+  }
+  .cursor-dot{width:6px;height:6px;background:var(--white);}
+  .cursor-ring{
+    width:38px;height:38px;border:1px solid var(--white);
+    transition:width .25s var(--ease), height .25s var(--ease), opacity .25s;
+  }
+  .cursor-ring.big{width:90px;height:90px;background:rgba(244,243,239,.15);border-color:var(--white);opacity:.9;}
+  body.no-fine-pointer{cursor:auto;}
+  body.no-fine-pointer .cursor-dot, body.no-fine-pointer .cursor-ring{display:none;}
+
+/* ---------- preloader ---------- */
   #preloader{
     position:fixed;inset:0;z-index:20000;background:var(--black);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
@@ -243,9 +258,15 @@
 
   /* ---------- gallery / selected work ---------- */
   .work-section{
+    position:relative;
     background:linear-gradient(135deg, #1c1220 0%, #12161f 28%, #171a12 55%, #1f1712 78%, #14181f 100%);
     background-size:180% 180%;
   }
+  .work-section::before{
+    content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
+    background:linear-gradient(180deg, var(--black) 0%, transparent 14%, transparent 86%, var(--black) 100%);
+  }
+  .work-section > .wrap{position:relative;z-index:2;}
   .gallery{
     columns:4 260px; column-gap:14px;
   }
@@ -391,6 +412,8 @@
 
 <div class="grain"></div>
 <div class="vignette"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
 <div id="preloader">
   <div class="pre-logo"><div class="bar"></div>JF<div class="bar"></div></div>
@@ -740,6 +763,10 @@
 
 <script>
 (function(){
+  // ---------- pointer support check ----------
+  const fine = window.matchMedia('(pointer:fine)').matches;
+  if(!fine){ document.body.classList.add('no-fine-pointer'); }
+
   // ---------- preloader ----------
   const preFill = document.getElementById('preFill');
   const prePct = document.getElementById('prePct');
@@ -772,6 +799,27 @@
   },60);
   // safety fallback in case some images never fire load (cache edge cases)
   setTimeout(()=>{ imagesReady = true; }, Math.max(MIN_DURATION, 4000));
+
+  // ---------- custom cursor ----------
+  if(fine){
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mx=0,my=0, rx=0, ry=0;
+    window.addEventListener('mousemove', e=>{
+      mx=e.clientX; my=e.clientY;
+      dot.style.left = mx+'px'; dot.style.top = my+'px';
+    });
+    function raf(){
+      rx += (mx-rx)*0.18; ry += (my-ry)*0.18;
+      ring.style.left = rx+'px'; ring.style.top = ry+'px';
+      requestAnimationFrame(raf);
+    }
+    raf();
+    document.querySelectorAll('[data-hover], a, .work-card').forEach(el=>{
+      el.addEventListener('mouseenter', ()=>ring.classList.add('big'));
+      el.addEventListener('mouseleave', ()=>ring.classList.remove('big'));
+    });
+  }
 
   // ---------- header scroll state ----------
   const header = document.getElementById('siteHeader');
