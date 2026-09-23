@@ -7,3 +7,8 @@ Thumbs.db
 # raw/unused source assets (not referenced by the site)
 assets/JF Owner/
 *.zip
+
+# raw source/extraction dumps, not used by the live site
+assets/raw/
+assets/Works/
+contact_sheet.png

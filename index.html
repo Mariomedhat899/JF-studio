@@ -27,7 +27,6 @@
     font-family:'Inter',sans-serif;
     font-weight:300;
     overflow-x:hidden;
-    cursor:none;
   }
   ::selection{background:var(--white);color:var(--black);}
   a{color:inherit;text-decoration:none;}
@@ -52,21 +51,6 @@
     pointer-events:none;position:fixed;inset:0;z-index:9997;
     background:radial-gradient(120% 100% at 50% 40%, transparent 40%, rgba(0,0,0,.55) 100%);
   }
-
-  /* ---------- custom cursor ---------- */
-  .cursor-dot,.cursor-ring{
-    position:fixed;top:0;left:0;pointer-events:none;z-index:10000;
-    border-radius:50%; transform:translate(-50%,-50%);
-    mix-blend-mode:difference;
-  }
-  .cursor-dot{width:6px;height:6px;background:var(--white);}
-  .cursor-ring{
-    width:38px;height:38px;border:1px solid var(--white);
-    transition:width .25s var(--ease), height .25s var(--ease), opacity .25s;
-  }
-  .cursor-ring.big{width:90px;height:90px;background:var(--white);mix-blend-mode:difference;opacity:.9;}
-  body.no-fine-pointer{cursor:auto;}
-  body.no-fine-pointer .cursor-dot, body.no-fine-pointer .cursor-ring{display:none;}
 
   /* ---------- preloader ---------- */
   #preloader{
@@ -257,28 +241,38 @@
   }
   .service-sub span::before{content:'';position:absolute;left:0;top:50%;width:6px;height:1px;background:var(--dim);transform:translateY(-50%);}
 
-  /* ---------- gallery ---------- */
+  /* ---------- gallery / selected work ---------- */
+  .work-section{
+    background:linear-gradient(135deg, #1c1220 0%, #12161f 28%, #171a12 55%, #1f1712 78%, #14181f 100%);
+    background-size:180% 180%;
+  }
   .gallery{
     columns:4 260px; column-gap:14px;
   }
-  .g-item{
-    break-inside:avoid; margin-bottom:14px; position:relative; overflow:hidden; background:#111;
-    opacity:0; transform:translateY(40px); transition:opacity .9s var(--ease), transform .9s var(--ease);
+  .work-card{
+    display:block; break-inside:avoid; margin-bottom:14px; position:relative; overflow:hidden;
+    background:#111; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.35);
+    opacity:0; transform:translateY(40px); transition:opacity .9s var(--ease), transform .9s var(--ease), box-shadow .4s;
   }
-  .g-item.in{opacity:1;transform:translateY(0);}
-  .g-item img{width:100%;display:block;filter:grayscale(1) contrast(1.12);transition:transform 1s var(--ease), filter .6s;}
-  .g-item:hover img{transform:scale(1.08);filter:grayscale(.15) contrast(1.15);}
-  .g-item .tag{
-    position:absolute;left:14px;bottom:14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;
-    color:var(--white); opacity:0; transform:translateY(10px); transition:all .4s var(--ease);
-    background:rgba(10,10,10,.5); padding:6px 10px;
+  .work-card.in{opacity:1;transform:translateY(0);}
+  .work-card:hover{box-shadow:0 16px 40px rgba(0,0,0,.5);}
+  .work-card img{width:100%;display:block;transition:transform 1s var(--ease);}
+  .work-card:hover img{transform:scale(1.06);}
+  .work-card-overlay{
+    position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(180deg,transparent 45%, rgba(0,0,0,.78) 100%);
   }
-  .g-item:hover .tag{opacity:1;transform:translateY(0);}
-  .g-item::before{
-    content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%, rgba(0,0,0,.65) 100%);
-    opacity:0;transition:opacity .4s;
+  .work-info{
+    position:absolute;left:16px;right:16px;bottom:16px;display:flex;flex-direction:column;gap:4px;
   }
-  .g-item:hover::before{opacity:1;}
+  .work-title{font-family:'Bebas Neue';font-size:22px;letter-spacing:.5px;color:var(--white);}
+  .work-sub{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(244,243,239,.75);}
+  .work-link{
+    position:absolute;top:14px;right:14px;font-size:11px;letter-spacing:1px;text-transform:uppercase;
+    color:var(--white); background:rgba(10,10,10,.55); padding:7px 12px; border-radius:100px;
+    opacity:0; transform:translateY(-6px); transition:all .35s var(--ease); backdrop-filter:blur(2px);
+  }
+  .work-card:hover .work-link{opacity:1;transform:translateY(0);}
 
   /* ---------- editorial lists (recent/previous/shorts) ---------- */
   .edi-cols{display:grid;grid-template-columns:1fr 1fr;gap:70px;}
@@ -397,8 +391,6 @@
 
 <div class="grain"></div>
 <div class="vignette"></div>
-<div class="cursor-dot" id="cursorDot"></div>
-<div class="cursor-ring" id="cursorRing"></div>
 
 <div id="preloader">
   <div class="pre-logo"><div class="bar"></div>JF<div class="bar"></div></div>
@@ -554,23 +546,23 @@
 </section>
 
 <!-- WORK / GALLERY -->
-<section class="section" id="work">
+<section class="section work-section" id="work">
   <div class="wrap">
     <div class="section-head reveal">
       <h2 class="big">Selected Work</h2>
       <div class="num">03 / A Sample of Previous Projects</div>
     </div>
-    <div class="gallery" id="gallery">
-      <div class="g-item"><img src="assets/img/work-campaign.jpg" alt="Brand campaign photography"><div class="tag">Campaign · Editorial</div></div>
-      <div class="g-item"><img src="assets/img/work-portrait-01.jpg" alt="Portrait photography"><div class="tag">Portrait</div></div>
-      <div class="g-item"><img src="assets/img/work-flatlay.jpg" alt="Product flat-lay"><div class="tag">Product · Flat Lay</div></div>
-      <div class="g-item"><img src="assets/img/work-fineart-wings.jpg" alt="Fine art photography"><div class="tag">Fine Art</div></div>
-      <div class="g-item"><img src="assets/img/work-product-hair.jpg" alt="Product photography"><div class="tag">Product</div></div>
-      <div class="g-item"><img src="assets/img/work-food-03.jpg" alt="Food photography"><div class="tag">Food</div></div>
-      <div class="g-item"><img src="assets/img/work-portrait-blinds.jpg" alt="Portrait with light and shadow"><div class="tag">Portrait · Light</div></div>
-      <div class="g-item"><img src="assets/img/work-product-bag.jpg" alt="Product photography bag"><div class="tag">Product</div></div>
-      <div class="g-item"><img src="assets/img/work-portrait-02.jpg" alt="Fashion portrait"><div class="tag">Fashion</div></div>
-      <div class="g-item"><img src="assets/img/work-food-02.jpg" alt="Food texture photography"><div class="tag">Food · Texture</div></div>
+    <div class="gallery work-gallery" id="gallery">
+      <a class="work-card" href="https://www.behance.net/gallery/248400481/AI-Films-(-Real-State-)" target="_blank" rel="noopener" data-hover><img src="assets/img/work/ai-films-real-estate.jpg" alt="AI Films — Real Estate — AI-Generated Property Series" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">AI Films — Real Estate</span><span class="work-sub">AI-Generated Property Series</span></div><span class="work-link">View on Behance ↗</span></a>
+      <a class="work-card" href="https://www.behance.net/gallery/211892745/catalogue" target="_blank" rel="noopener" data-hover><img src="assets/img/work/catalogue.jpg" alt="Catalogue — Product Catalogue Photography" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">Catalogue</span><span class="work-sub">Product Catalogue Photography</span></div><span class="work-link">View on Behance ↗</span></a>
+      <a class="work-card" href="https://www.behance.net/gallery/240188619/MOKARI" target="_blank" rel="noopener" data-hover><img src="assets/img/work/mokari.png" alt="MOKARI — Brand Campaign" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">MOKARI</span><span class="work-sub">Brand Campaign</span></div><span class="work-link">View on Behance ↗</span></a>
+      <a class="work-card" href="https://www.behance.net/gallery/240187349/ik-world" target="_blank" rel="noopener" data-hover><img src="assets/img/work/ik-world.png" alt="ik world — Brand Content" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">ik world</span><span class="work-sub">Brand Content</span></div><span class="work-link">View on Behance ↗</span></a>
+      <a class="work-card" href="https://www.behance.net/gallery/240187351/Reese" target="_blank" rel="noopener" data-hover><img src="assets/img/work/reese.jpg" alt="Reese — Product Content" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">Reese</span><span class="work-sub">Product Content</span></div><span class="work-link">View on Behance ↗</span></a>
+      <a class="work-card" href="https://www.behance.net/gallery/233207095/Vastec" target="_blank" rel="noopener" data-hover><img src="assets/img/work/vastec.jpg" alt="Vastec — Product &amp; Brand Content" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">Vastec</span><span class="work-sub">Product &amp; Brand Content</span></div><span class="work-link">View on Behance ↗</span></a>
+      <a class="work-card" href="https://www.behance.net/gallery/211895455/SAKAN" target="_blank" rel="noopener" data-hover><img src="assets/img/work/sakan.jpg" alt="SAKAN — Architectural Photography" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">SAKAN</span><span class="work-sub">Architectural Photography</span></div><span class="work-link">View on Behance ↗</span></a>
+      <a class="work-card" href="https://www.behance.net/gallery/223581753/trees-friend" target="_blank" rel="noopener" data-hover><img src="assets/img/work/trees-friend.jpg" alt="Trees Friend — Fine Art Photography" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">Trees Friend</span><span class="work-sub">Fine Art Photography</span></div><span class="work-link">View on Behance ↗</span></a>
+      <a class="work-card" href="https://www.behance.net/gallery/123688917/Aziz-kitchenvolcano-campaign" target="_blank" rel="noopener" data-hover><img src="assets/img/work/aziz-kitchen-volcano.jpg" alt="AZIZ — Kitchen Volcano — Commercial Campaign" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">AZIZ — Kitchen Volcano</span><span class="work-sub">Commercial Campaign</span></div><span class="work-link">View on Behance ↗</span></a>
+      <a class="work-card" href="https://www.behance.net/gallery/210216777/Mexico" target="_blank" rel="noopener" data-hover><img src="assets/img/work/mexico.jpg" alt="Mexico — Travel &amp; Documentary" loading="lazy"><div class="work-card-overlay"></div><div class="work-info"><span class="work-title">Mexico</span><span class="work-sub">Travel &amp; Documentary</span></div><span class="work-link">View on Behance ↗</span></a>
     </div>
   </div>
 </section>
@@ -748,10 +740,6 @@
 
 <script>
 (function(){
-  // ---------- pointer support check ----------
-  const fine = window.matchMedia('(pointer:fine)').matches;
-  if(!fine){ document.body.classList.add('no-fine-pointer'); }
-
   // ---------- preloader ----------
   const preFill = document.getElementById('preFill');
   const prePct = document.getElementById('prePct');
@@ -785,27 +773,6 @@
   // safety fallback in case some images never fire load (cache edge cases)
   setTimeout(()=>{ imagesReady = true; }, Math.max(MIN_DURATION, 4000));
 
-  // ---------- custom cursor ----------
-  if(fine){
-    const dot = document.getElementById('cursorDot');
-    const ring = document.getElementById('cursorRing');
-    let mx=0,my=0, rx=0, ry=0;
-    window.addEventListener('mousemove', e=>{
-      mx=e.clientX; my=e.clientY;
-      dot.style.left = mx+'px'; dot.style.top = my+'px';
-    });
-    function raf(){
-      rx += (mx-rx)*0.18; ry += (my-ry)*0.18;
-      ring.style.left = rx+'px'; ring.style.top = ry+'px';
-      requestAnimationFrame(raf);
-    }
-    raf();
-    document.querySelectorAll('[data-hover], a, .g-item').forEach(el=>{
-      el.addEventListener('mouseenter', ()=>ring.classList.add('big'));
-      el.addEventListener('mouseleave', ()=>ring.classList.remove('big'));
-    });
-  }
-
   // ---------- header scroll state ----------
   const header = document.getElementById('siteHeader');
   window.addEventListener('scroll', ()=>{
@@ -821,7 +788,7 @@
   mobileNav.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>mobileNav.classList.remove('open')));
 
   // ---------- reveal on scroll ----------
-  const revealEls = document.querySelectorAll('.reveal, .reveal-child, .g-item');
+  const revealEls = document.querySelectorAll('.reveal, .reveal-child, .work-card');
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(entry=>{
       if(entry.isIntersecting){
