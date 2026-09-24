@@ -74,8 +74,8 @@
     transition:transform 1s var(--ease), opacity .8s ease;
   }
   #preloader.hide{transform:translateY(-100%);opacity:0.4;}
-  .pre-logo{font-family:'Bebas Neue';font-size:14vw;letter-spacing:2px;line-height:.8;display:flex;align-items:center;gap:14px;}
-  .pre-logo .bar{width:60px;height:2px;background:var(--white);}
+  .pre-logo{display:flex;align-items:center;justify-content:center;}
+  .pre-logo-img{width:min(46vw,320px);height:auto;}
   .pre-bar-track{width:220px;height:1px;background:var(--line);position:relative;overflow:hidden;}
   .pre-bar-fill{position:absolute;left:0;top:0;height:100%;width:0%;background:var(--white);}
   .pre-pct{font-size:11px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;}
@@ -229,8 +229,14 @@
   .mission-box .label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;}
   .mission-box p{font-size:17px;line-height:1.6;color:var(--white);font-weight:400;margin:0;}
   .about-media{position:relative;aspect-ratio:3/4;overflow:hidden;}
-  .about-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1);transition:transform 1.2s var(--ease);}
-  .about-media:hover img{transform:scale(1.06);}
+  .about-bg-slides{position:absolute;inset:0;}
+  .about-bg-slide{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:grayscale(1) contrast(1.1);
+    opacity:0;transition:opacity 1.8s ease-in-out, transform 1.2s var(--ease);
+  }
+  .about-bg-slide.active{opacity:1;}
+  .about-media:hover .about-bg-slide.active{transform:scale(1.06);}
   .about-media .frame-tag{
     position:absolute;bottom:16px;left:16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;
     color:var(--white);background:rgba(10,10,10,.55);padding:8px 12px;backdrop-filter:blur(2px);
@@ -416,7 +422,7 @@
 <div class="cursor-ring" id="cursorRing"></div>
 
 <div id="preloader">
-  <div class="pre-logo"><div class="bar"></div>JF<div class="bar"></div></div>
+  <div class="pre-logo"><img src="assets/img/jf-logo.png" alt="JF Media Production" class="pre-logo-img"></div>
   <div class="pre-bar-track"><div class="pre-bar-fill" id="preFill"></div></div>
   <div class="pre-pct" id="prePct">Loading 0%</div>
 </div>
@@ -514,7 +520,27 @@
         </div>
       </div>
       <div class="about-media reveal">
-        <img src="assets/img/work-tablescape.jpg" alt="Studio production still">
+        <div class="about-bg-slides">
+        <img class="about-bg-slide active" src="assets/img/about/about-01.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-02.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-03.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-04.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-05.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-06.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-07.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-08.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-09.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-10.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-11.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-12.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-13.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-14.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-15.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-16.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-17.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-18.jpg" alt="JF on set behind the scenes">
+        <img class="about-bg-slide" src="assets/img/about/about-19.jpg" alt="JF on set behind the scenes">
+        </div>
         <div class="frame-tag">On Location — Studio Still</div>
       </div>
     </div>
@@ -866,6 +892,17 @@
       heroBgSlides.style.transform = 'scale(1.0) translateY(' + (y*0.18) + 'px)';
     }
   }, {passive:true});
+
+  // ---------- about section slideshow ----------
+  const aboutSlides = document.querySelectorAll('.about-bg-slide');
+  let aboutSlideIndex = 0;
+  if(aboutSlides.length){
+    setInterval(()=>{
+      aboutSlides[aboutSlideIndex].classList.remove('active');
+      aboutSlideIndex = (aboutSlideIndex + 1) % aboutSlides.length;
+      aboutSlides[aboutSlideIndex].classList.add('active');
+    }, 3200);
+  }
 
 })();
 </script>
